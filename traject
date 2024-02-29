@@ -15,7 +15,7 @@ def runge_kutta(t, x, h, A, B):
     b = [1/6, 4/6, 1/6]
 
     k = np.zeros((len(b), len(x))) # k values
-
+    print(x)
     for i in range(len(b)):
         summation = np.zeros(len(x))
         for j in range(i):
@@ -30,7 +30,7 @@ def plot_trajectories(A, B, x0, T, h, steps):
     t_values = np.linspace(0, T, steps+1)
     x_values = np.zeros((2, steps+1))
     x_values[:,0] = x0
-
+    print(x0)
     for i in range(steps):
         x_values[:,i+1] = runge_kutta(t_values[i], x_values[:,i], h, A, B)
     #plt.figure(figsize=(12, 6))
@@ -45,17 +45,29 @@ def B(t):
 
 x0 = np.array([-1,1])
 T = 10 # Временной период
-h = 0.2 # Шаг интегрирования
+h = 0.8 # Шаг интегрирования
 a = 4
 b = 2
 steps = int(T / h) # Количество шагов
 x1_c = -5
 x2_c =3
-for i in range(int(b/h) + 1):
-        for j in range(int(a/h) + 1):
-            x0[0] = x1_c + j * h
-            x0[1] = x2_c + i * h
-            plot_trajectories(A, B, x0, T, h, steps)
+x0 = [0, 0]
+for i in range(int(a/h)):
+    x0[ 1] = x2_c
+    x0[ 0] = x1_c + i * h
+    plot_trajectories(A, B, x0, T, h, steps)
+for i in range(int(b/h)):
+    x0[ 1] = x2_c + i*h
+    x0[0] = x1_c+ a
+    plot_trajectories(A, B, x0, T, h, steps)
+for i in range(int(a/h)):
+    x0[ 1] = x2_c+ b
+    x0[ 0] = x1_c + a- i * h
+    plot_trajectories(A, B, x0, T, h, steps)
+for i in range(int(b/h)):
+    x0[1] = x2_c+ b - i*h
+    x0[ 0] = x1_c
+    plot_trajectories(A, B, x0, T, h, steps)
 
 plt.xlabel('x1')
 plt.ylabel('x2')
