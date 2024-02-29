@@ -49,8 +49,8 @@ h = 0.2 # Шаг интегрирования
 a = 4
 b = 2
 steps = int(T / h) # Количество шагов
-x1_c = 3
-x2_c =7
+x1_c = -5
+x2_c =3
 for i in range(int(b/h) + 1):
         for j in range(int(a/h) + 1):
             x0[0] = x1_c + j * h
