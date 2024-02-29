@@ -49,6 +49,6 @@ for i in range(len(T)):
     plt.subplot(1, 2, 2)
     plt.streamplot(x, y, vx, vy)
     plt.grid()
-    plt.xlabel('x2')
-    plt.ylabel('x1')
+    plt.xlabel('x1')
+    plt.ylabel('x2')
     plt.show()
