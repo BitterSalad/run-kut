@@ -33,21 +33,22 @@ def A(t):
 def B(t):
     return np.cos(t)
 
-T = [0, 0.5, 1.0, 1.5, 2.0] # Временной период
+T = [0, 0.5, 1.0, 1.5, 2.0]
 h = 0.2 # Шаг интегрирования
 a = 4
 b = 2
 for i in range(len(T)):
-    x, y = np.mgrid[-12:4:h, -4:12:h]
-    vx = -np.cos(T) * x
-    vy = np.cos(T) * y
-    plt.subplot(1,2,1)
-    plt.quiver(y, x, vy, vx)
+    y, x = np.mgrid[-4:12:h, -12:4:h]
+    vx = -np.cos(T[i]) * x
+    vy = np.cos(T[i]) * y
+    plt.subplot(1, 2, 1)
+    plt.quiver(x, y, vx, vy)
+    plt.grid()
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    plt.subplot(1, 2, 2)
+    plt.streamplot(x, y, vx, vy)
     plt.grid()
     plt.xlabel('x2')
     plt.ylabel('x1')
-    plt.subplot(1,2,2)
-    plt.streamplot(y, x, vy, vx)
-    plt.grid()
-    plt.xlabel('x2')
-    plt.ylabel('x1')
+    plt.show()
