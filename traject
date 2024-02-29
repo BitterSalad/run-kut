@@ -43,7 +43,7 @@ def A(t):
 def B(t):
     return np.cos(t)
 
-x0 = np.array([1,1])
+x0 = np.array([-1,1])
 T = 10 # Временной период
 h = 0.2 # Шаг интегрирования
 a = 4
