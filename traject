@@ -1,77 +1,77 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Уравнения для скоростей
-def v1(t, x1, A):
+
+def v1(t, x1):
     return -A(t)*x1
 
-def v2(t, x2, B):
+
+def v2(t, x2):
     return B(t)*x2
 
-# Метод Рунге-Кутты с учетом таблицы Бутчера
-def runge_kutta(t, x, h, A, B):
-    c = [0, 1/2, 1]
-    a = [[0, 0, 0], [1/2, 0, 0], [-1, 2, 0]]
-    b = [1/6, 4/6, 1/6]
 
-    k = np.zeros((len(b), len(x))) # k values
-    print(x)
-    for i in range(len(b)):
-        summation = np.zeros(len(x))
-        for j in range(i):
-            summation += a[i][j] * k[j]
-        k[i] = h * np.array([v1(t + c[i]*h, x[0] + summation[0], A), v2(t + c[i]*h, x[1] + summation[1], B)])
-
-    x_next = x + np.dot(b, k)
+def runge_kutta(t, x, h):
+    x1 = x[0]
+    x2 = x[1]
+    k = np.zeros((2, 3))
+    x_next = np.zeros(2)
+    k[0, 0] = v1(t, x1)
+    k[0, 1] = v1(t + h * k[0, 0]/2, x1 + h / 2)
+    k[0, 2] = v1(t - h * k[0, 0] + h * 2 * k[0, 1], x1 + h)
+    k[1, 0] = v2(t, x2)
+    k[1, 1] = v2(t + h * k[1, 0] / 2, x1 + h / 2)
+    k[1, 2] = v2(t - h * k[1, 0] + h * 2 * k[1, 1], x2 + h)
+    for i in range(2):
+        x_next[i] = x[i] + h * (k[i, 0] / 6 + 4/6 * k[i, 1] + k[i, 2] / 6)
     return x_next
 
-# Функция для построения траектории движения
-def plot_trajectories(A, B, x0, T, h, steps):
-    t_values = np.linspace(0, T, steps+1)
-    x_values = np.zeros((2, steps+1))
-    x_values[:,0] = x0
-    print(x0)
-    for i in range(steps):
-        x_values[:,i+1] = runge_kutta(t_values[i], x_values[:,i], h, A, B)
-    #plt.figure(figsize=(12, 6))
-    plt.plot(x_values[0], x_values[1])
 
-# Функции A и B для скоростей
+def plot_trajectories(x0, T, h, steps):
+    t = np.linspace(0, T, steps+1)
+    x = np.zeros((2, steps+1))
+    x[:, 0] = x0
+    for i in range(steps):
+        x[:, i+1] = runge_kutta(t[i], x[:, i], h)
+    plt.plot(x[0], x[1])
+
+
 def A(t):
     return -np.cos(t)
+
 
 def B(t):
     return np.cos(t)
 
-x0 = np.array([-1,1])
-T = 10 # Временной период
-h = 0.8 # Шаг интегрирования
+
+x0 = np.array([-1, 1])
+T = np.pi/2
+h = 0.2
+f = 1
 a = 4
 b = 2
-steps = int(T / h) # Количество шагов
+steps = int(T / h)
 x1_c = -5
-x2_c =3
-x0 = [0, 0]
-for i in range(int(a/h)):
-    x0[ 1] = x2_c
-    x0[ 0] = x1_c + i * h
-    plot_trajectories(A, B, x0, T, h, steps)
-for i in range(int(b/h)):
-    x0[ 1] = x2_c + i*h
-    x0[0] = x1_c+ a
-    plot_trajectories(A, B, x0, T, h, steps)
-for i in range(int(a/h)):
-    x0[ 1] = x2_c+ b
-    x0[ 0] = x1_c + a- i * h
-    plot_trajectories(A, B, x0, T, h, steps)
-for i in range(int(b/h)):
-    x0[1] = x2_c+ b - i*h
-    x0[ 0] = x1_c
-    plot_trajectories(A, B, x0, T, h, steps)
+x2_c = 8
+x0 = np.zeros(2)
+for i in range(int(a/f)):
+    x0[1] = x2_c
+    x0[0] = x1_c + i * f
+    plot_trajectories(x0, T, h, steps)
+for i in range(int(b/f)):
+    x0[1] = x2_c + i*f
+    x0[0] = x1_c + a
+    plot_trajectories(x0, T, h, steps)
+for i in range(int(a/f)):
+    x0[1] = x2_c + b
+    x0[0] = x1_c + a - i * f
+    plot_trajectories(x0, T, h, steps)
+for i in range(int(b/f)):
+    x0[1] = x2_c + b - i*f
+    x0[0] = x1_c
+    plot_trajectories(x0, T, h, steps)
 
 plt.xlabel('x1')
 plt.ylabel('x2')
 plt.title('Trajectory of the material body')
 plt.grid()
-plt.legend()
 plt.show()
