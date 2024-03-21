@@ -36,7 +36,7 @@ def plot_trajectories(x0, T, h, steps):
 
 
 def A(t):
-    return -np.cos(t)
+    return np.cos(t)
 
 
 def B(t):
