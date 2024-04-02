@@ -10,18 +10,20 @@ def v2(t, x2):
     return B(t)*x2
 
 
+def vflag(t, xi, flag):
+    if flag == 0:
+        return v1(t, xi)
+    if flag == 1:
+        return v2(t, xi)
+
+
 def runge_kutta(t, x, h):
-    x1 = x[0]
-    x2 = x[1]
     k = np.zeros((2, 3))
     x_next = np.zeros(2)
-    k[0, 0] = v1(t, x1)
-    k[0, 1] = v1(t + h * k[0, 0]/2, x1 + h / 2)
-    k[0, 2] = v1(t - h * k[0, 0] + h * 2 * k[0, 1], x1 + h)
-    k[1, 0] = v2(t, x2)
-    k[1, 1] = v2(t + h * k[1, 0] / 2, x1 + h / 2)
-    k[1, 2] = v2(t - h * k[1, 0] + h * 2 * k[1, 1], x2 + h)
     for i in range(2):
+        k[i, 0] = vflag(t, x[i], i)
+        k[i, 1] = vflag(t + h * k[i, 0] / 2, x[i] + h / 2, i)
+        k[i, 2] = vflag(t - h * k[i, 0] + h * 2 * k[i, 1], x[i] + h, i)
         x_next[i] = x[i] + h * (k[i, 0] / 6 + 4/6 * k[i, 1] + k[i, 2] / 6)
     return x_next
 
@@ -43,35 +45,65 @@ def B(t):
     return np.cos(t)
 
 
-x0 = np.array([-1, 1])
-T = np.pi/2
-h = 0.2
+def plot_all():
+    for i in range(int(a / f)):
+        x0[1] = x2_c
+        x0[0] = x1_c + i * f
+        plot_trajectories(x0, Tmax, h, steps)
+    for i in range(int(b / f)):
+        x0[1] = x2_c + i * f
+        x0[0] = x1_c + a
+        plot_trajectories(x0, Tmax, h, steps)
+    for i in range(int(a / f)):
+        x0[1] = x2_c + b
+        x0[0] = x1_c + a - i * f
+        plot_trajectories(x0, Tmax, h, steps)
+    for i in range(int(b / f)):
+        x0[1] = x2_c + b - i * f
+        x0[0] = x1_c
+        plot_trajectories(x0, Tmax, h, steps)
+
+
+def plotstep(fex, axis):
+    fin = fex/2
+    if axis == 0:
+        for i in range(int(a / fin)):
+            x0[1] = x2_c
+            x0[0] = x1_c + i * fin
+            plot_trajectories(x0, Tmax, h, steps)
+    if axis == 1:
+        for i in range(int(b / fin)):
+            x0[1] = x2_c + i * fin
+            x0[0] = x1_c + a
+            plot_trajectories(x0, Tmax, h, steps)
+
+
+def showcase_flagged(flag):
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    if flag == 2:
+        plt.title('Trajectory of the material body')
+    if flag == 1:
+        plt.title('Trajectory of a vertical rod')
+    if flag == 0:
+        plt.title('Trajectory of a horizontal rod')
+    plt.grid()
+    plt.show()
+
+
+Tmax = np.pi/2
+h = 0.1
 f = 1
 a = 4
 b = 2
-steps = int(T / h)
+steps = int(Tmax / h)
 x1_c = -5
-x2_c = 8
+x2_c = 2
 x0 = np.zeros(2)
-for i in range(int(a/f)):
-    x0[1] = x2_c
-    x0[0] = x1_c + i * f
-    plot_trajectories(x0, T, h, steps)
-for i in range(int(b/f)):
-    x0[1] = x2_c + i*f
-    x0[0] = x1_c + a
-    plot_trajectories(x0, T, h, steps)
-for i in range(int(a/f)):
-    x0[1] = x2_c + b
-    x0[0] = x1_c + a - i * f
-    plot_trajectories(x0, T, h, steps)
-for i in range(int(b/f)):
-    x0[1] = x2_c + b - i*f
-    x0[0] = x1_c
-    plot_trajectories(x0, T, h, steps)
 
-plt.xlabel('x1')
-plt.ylabel('x2')
-plt.title('Trajectory of the material body')
-plt.grid()
-plt.show()
+plot_all()
+showcase_flagged(2)
+plotstep(f, 0)
+showcase_flagged(0)
+plotstep(f, 1)
+showcase_flagged(1)
